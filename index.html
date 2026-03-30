@@ -23,6 +23,7 @@
 				min-height: 100vh;
 				color: #fff;
 				padding: 20px;
+				perspective: 1000px;
 			}
 			
 			.page-container {
@@ -52,6 +53,9 @@
 				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 				border-radius: 2px;
 				width: 100%;
+				transform-style: preserve-3d;
+				transition: transform 0.4s ease;
+				will-change: transform;
 			}
 			
 			.reel-container {
@@ -62,23 +66,29 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				position: relative;
 			}
 			
 			video {
+				position: absolute;
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
+				opacity: 0;
+				transition: opacity 0.8s ease-in-out;
+			}
+			
+			video.active {
+				opacity: 1;
+			}
+			
+			video.show {
+				opacity: 1;
 			}
 			
 			.caption {
 				margin-top: 20px;
 				text-align: center;
-			}
-			
-			.caption h1 {
-				font-family: 'Brush Script MT', cursive;
-				color: #2c2c2c;
-				font-size: 1.8rem;
 			}
 			
 			.caption p {
@@ -101,6 +111,21 @@
 				font-size: 0.9rem;
 				font-weight: bold;
 				width: 60%;
+				transition: transform 0.2s ease;
+			}
+			
+			.album-btn:active {
+				transform: scale(0.95);
+			}
+			
+			/* grain overlay */
+			.reel-container::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				background: url('https://grainy-gradients.vercel.app/noise.svg');
+				opacity: 0.2;
+				pointer-events: none;
 			}
 		</style>
 	</head>
@@ -110,9 +135,10 @@
 		<div class="page-container">
 			<div class="tape"></div>
 
-			<div class="polaroid">
+			<div class="polaroid" id="polaroid">
 				<div class="reel-container">
-					<video id="myReel" muted playsinline autoplay></video>
+					<video id="videoA" muted playsinline autoplay></video>
+					<video id="videoB" muted playsinline autoplay></video>
 				</div>
 
 				<div class="caption">
@@ -125,40 +151,99 @@
 				Open Album
 			</a>
 		</div>
-
 		<script>
 			const TOTAL_VIDEOS = 8;
-			const videoElement = document.getElementById('myReel');
 			
+			const videoA = document.getElementById('videoA');
+			const videoB = document.getElementById('videoB');
+			
+			let current = videoA;
+			let next = videoB;
+			
+			const polaroid = document.getElementById('polaroid');
+			
+			let startX = 0;
+			let startY = 0;
+			
+			// Load a random video into "next"
 			function loadRandomVideo() {
-				const randomVideoNumber = Math.floor(Math.random() * TOTAL_VIDEOS) + 1;
-				
-				videoElement.src = `assets/${randomVideoNumber}.mp4`;
-				videoElement.load();
+				const n = Math.floor(Math.random() * TOTAL_VIDEOS) + 1;
+				next.src = `assets/${n}.mp4`;
+				next.load();
 			}
 			
-			// Wait until metadata is ready (safe for Android)
-			videoElement.addEventListener('loadedmetadata', () => {
-				try {
-					const maxStartTime = Math.max(0, videoElement.duration - 5);
-					const startPos = Math.random() * maxStartTime;
-					
-					videoElement.currentTime = startPos;
-					} catch (e) {}
-					
-					videoElement.play().catch(() => {});
-					});
-					
-					// Load next video when current ends
-					videoElement.addEventListener('ended', loadRandomVideo);
-					
-					// Fallback: user tap required on some Android devices
-					document.addEventListener('click', () => {
-						videoElement.play().catch(() => {});
-						}, { once: true });
+			// Switch videos smoothly (crossfade)
+			function switchVideos() {
+				current.classList.remove('active');
+				next.classList.add('active');
+				
+				// swap references
+				[current, next] = [next, current];
+			}
+			
+			// When metadata is ready → start playback + switch
+			[videoA, videoB].forEach(video => {
+				video.addEventListener('loadedmetadata', () => {
+					try {
+						const maxStart = Math.max(0, video.duration - 5);
+						video.currentTime = Math.random() * maxStart;
+						} catch (e) {}
 						
-						// Initial load
-						window.addEventListener('load', loadRandomVideo);
+						video.play().catch(() => {});
+						
+						if (video === next) {
+							switchVideos();
+						}
+						});
+						});
+						
+						// When current video ends → preload next
+						videoA.addEventListener('ended', loadRandomVideo);
+						videoB.addEventListener('ended', loadRandomVideo);
+						
+						// Tap fallback for autoplay restrictions
+						document.addEventListener('click', () => {
+							videoA.play().catch(() => {});
+							videoB.play().catch(() => {});
+							}, { once: true });
+							
+							// Touch interactions (3D tilt)
+							document.addEventListener('touchstart', (e) => {
+								startX = e.touches[0].clientX;
+								startY = e.touches[0].clientY;
+								
+								polaroid.style.transform = 'rotateX(2deg) rotateY(-2deg)';
+								});
+								
+								document.addEventListener('touchmove', (e) => {
+									const x = e.touches[0].clientX;
+									const y = e.touches[0].clientY;
+									
+									const dx = x - startX;
+									const dy = y - startY;
+									
+									const rotateX = dy / 20;
+									const rotateY = dx / 20;
+									
+									polaroid.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+									});
+									
+									document.addEventListener('touchend', (e) => {
+										polaroid.style.transform = 'rotateX(0deg) rotateY(0deg)';
+										
+										const endX = e.changedTouches[0].clientX;
+										
+										// swipe to skip
+										if (Math.abs(endX - startX) > 80) {
+											loadRandomVideo();
+										}
+										});
+										
+										// Initial setup
+										window.addEventListener('load', () => {
+											videoA.classList.add('active'); // first video visible
+											loadRandomVideo();
+											});
 		</script>
 	</body>
 </html>
