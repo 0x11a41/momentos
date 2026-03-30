@@ -162,7 +162,6 @@
 
 		<script>
 			const TOTAL_VIDEOS = 8;
-			
 			const videoElement = document.getElementById('myReel');
 			
 			function loadRandomVideo() {
@@ -173,18 +172,20 @@
 			
 			videoElement.addEventListener('loadedmetadata', function() {
 				const maxStartTime = Math.max(0, videoElement.duration - 2);
-				const randomStartTimestamp = Math.random() * maxStartTime;
-				videoElement.currentTime = randomStartTimestamp;
-				videoElement.play().catch(error => {
-					console.log("Autoplay was prevented by the browser. Awaiting user interaction.");
-					});
-					});
-					
-					videoElement.addEventListener('ended', function() {
-						loadRandomVideo();
+				videoElement.currentTime = Math.random() * maxStartTime;
+				});
+				
+				videoElement.addEventListener('canplay', function() {
+					videoElement.play().catch(error => {
+						console.log("Autoplay was prevented by the browser. Awaiting user interaction.");
+						});
 						});
 						
-						window.addEventListener('load', loadRandomVideo);
+						videoElement.addEventListener('ended', function() {
+							loadRandomVideo();
+							});
+							
+							window.addEventListener('load', loadRandomVideo);
 		</script>
 	</body>
 </html>
