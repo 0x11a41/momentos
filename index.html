@@ -4,8 +4,8 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>College Memories | Farewell 2026</title>
+
 		<style>
-			/* Reset and Base Styles */
 			* {
 				box-sizing: border-box;
 				margin: 0;
@@ -13,7 +13,7 @@
 			}
 			
 			body {
-				background: #121212; /* Dark aesthetic to make the Polaroid pop */
+				background: #121212;
 				background-image: radial-gradient(#2c2c2c 10%, transparent 10%);
 				background-size: 20px 20px;
 				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,7 +25,6 @@
 				padding: 20px;
 			}
 			
-			/* The Main Container */
 			.page-container {
 				display: flex;
 				flex-direction: column;
@@ -35,7 +34,6 @@
 				position: relative;
 			}
 			
-			/* Hanging Tape Effect */
 			.tape {
 				width: 120px;
 				height: 30px;
@@ -46,30 +44,24 @@
 				left: 50%;
 				transform: translateX(-50%) rotate(-2deg);
 				z-index: 10;
-				box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 			}
 			
 			.polaroid {
-				background: #fdfbf7; /* Slightly off-white for that vintage feel */
+				background: #fdfbf7;
 				padding: 16px 16px 30px 16px;
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-				0 2px 10px rgba(0, 0, 0, 0.3);
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 				border-radius: 2px;
 				width: 100%;
-				transform: rotate(1.5deg);
-				transition: transform 0.3s ease;
 			}
 			
 			.reel-container {
 				width: 100%;
-				aspect-ratio: 4 / 5; /* Great for vertical reels/TikTok style videos */
+				aspect-ratio: 4 / 5;
 				background: #000;
 				overflow: hidden;
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-				position: relative;
 			}
 			
 			video {
@@ -78,18 +70,15 @@
 				object-fit: cover;
 			}
 			
-			/* Polaroid Caption Area */
 			.caption {
 				margin-top: 20px;
 				text-align: center;
 			}
 			
-			/* Fun, handwritten-style font for the caption */
 			.caption h1 {
-				font-family: 'Brush Script MT', 'Comic Sans MS', cursive, sans-serif;
+				font-family: 'Brush Script MT', cursive;
 				color: #2c2c2c;
 				font-size: 1.8rem;
-				margin-bottom: 5px;
 			}
 			
 			.caption p {
@@ -99,47 +88,31 @@
 				letter-spacing: 2px;
 			}
 			
-			/* Google Photos Link Button */
 			.album-btn {
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
 				margin-top: 25px;
 				padding: 12px 24px;
-				background: #ea4335; /* Google Red */
+				background: #ea4335;
 				color: white;
 				text-decoration: none;
 				border-radius: 30px;
 				font-size: 0.9rem;
 				font-weight: bold;
-				box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
-				transition: all 0.2s ease;
 				width: 60%;
-			}
-			
-			.album-btn:hover {
-				background: #d93025;
-				transform: translateY(-2px);
-				box-shadow: 0 6px 20px rgba(234, 67, 53, 0.4);
-			}
-			
-			.album-btn svg {
-				margin-right: 8px;
-				fill: currentColor;
 			}
 		</style>
 	</head>
+
 	<body>
 
 		<div class="page-container">
 			<div class="tape"></div>
 
 			<div class="polaroid">
-
 				<div class="reel-container">
-					<video id="myReel" controls autoplay muted playsinline poster="thumbnail.jpg">
-						Your browser does not support the video tag.
-					</video>
+					<video id="myReel" muted playsinline autoplay></video>
 				</div>
 
 				<div class="caption">
@@ -149,7 +122,6 @@
 			</div>
 
 			<a href="https://photos.app.goo.gl/bfzz8yjWr7Tn9tCv7" class="album-btn" target="_blank">
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
 				Open Album
 			</a>
 		</div>
@@ -160,26 +132,33 @@
 			
 			function loadRandomVideo() {
 				const randomVideoNumber = Math.floor(Math.random() * TOTAL_VIDEOS) + 1;
+				
 				videoElement.src = `assets/${randomVideoNumber}.mp4`;
 				videoElement.load();
 			}
 			
-			videoElement.addEventListener('loadedmetadata', function() {
-				const maxStartTime = Math.max(0, videoElement.duration - 2);
-				videoElement.currentTime = Math.random() * maxStartTime;
-				});
-				
-				videoElement.addEventListener('canplay', function() {
-					videoElement.play().catch(error => {
-						console.log("Autoplay was prevented by the browser. Awaiting user interaction.");
-						});
-						});
+			// Wait until metadata is ready (safe for Android)
+			videoElement.addEventListener('loadedmetadata', () => {
+				try {
+					const maxStartTime = Math.max(0, videoElement.duration - 5);
+					const startPos = Math.random() * maxStartTime;
+					
+					videoElement.currentTime = startPos;
+					} catch (e) {}
+					
+					videoElement.play().catch(() => {});
+					});
+					
+					// Load next video when current ends
+					videoElement.addEventListener('ended', loadRandomVideo);
+					
+					// Fallback: user tap required on some Android devices
+					document.addEventListener('click', () => {
+						videoElement.play().catch(() => {});
+						}, { once: true });
 						
-						videoElement.addEventListener('ended', function() {
-							loadRandomVideo();
-							});
-							
-							window.addEventListener('load', loadRandomVideo);
+						// Initial load
+						window.addEventListener('load', loadRandomVideo);
 		</script>
 	</body>
 </html>
