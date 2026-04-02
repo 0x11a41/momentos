@@ -5,135 +5,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>College Memories | Farewell 2026</title>
 
-		<style>
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
-			
-			body {
-				background: #121212;
-				background-image: radial-gradient(#2c2c2c 10%, transparent 10%);
-				background-size: 20px 20px;
-				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				min-height: 100vh;
-				color: #fff;
-				padding: 20px;
-				perspective: 1000px;
-			}
-			
-			.page-container {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				max-width: 400px;
-				width: 100%;
-				position: relative;
-			}
-			
-			.tape {
-				width: 120px;
-				height: 30px;
-				background: rgba(255, 255, 255, 0.2);
-				backdrop-filter: blur(2px);
-				position: absolute;
-				top: -15px;
-				left: 50%;
-				transform: translateX(-50%) rotate(-2deg);
-				z-index: 10;
-			}
-			
-			.polaroid {
-				background: #fdfbf7;
-				padding: 16px 16px 30px 16px;
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-				border-radius: 2px;
-				width: 100%;
-				transform-style: preserve-3d;
-				transition: transform 0.4s ease;
-				will-change: transform;
-			}
-			
-			.reel-container {
-				width: 100%;
-				aspect-ratio: 4 / 5;
-				background: #000;
-				overflow: hidden;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				position: relative;
-			}
-			
-			video {
-				position: absolute;
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				opacity: 0;
-				transition: opacity 0.8s ease-in-out;
-			}
-			
-			video.active {
-				opacity: 1;
-			}
-			
-			video.show {
-				opacity: 1;
-			}
-			
-			.caption {
-				margin-top: 20px;
-				text-align: center;
-			}
-			
-			.caption p {
-				color: #777;
-				font-size: 0.85rem;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-			}
-			
-			.album-btn {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				margin-top: 25px;
-				padding: 12px 24px;
-				background: #ea4335;
-				color: white;
-				text-decoration: none;
-				border-radius: 30px;
-				font-size: 0.9rem;
-				font-weight: bold;
-				width: 60%;
-				transition: transform 0.2s ease;
-			}
-			
-			.album-btn:active {
-				transform: scale(0.95);
-			}
-			
-			/* grain overlay */
-			.reel-container::after {
-				content: "";
-				position: absolute;
-				inset: 0;
-				background: url('https://grainy-gradients.vercel.app/noise.svg');
-				opacity: 0.2;
-				pointer-events: none;
-			}
-		</style>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+		<link href="style.css" rel="stylesheet">
 	</head>
 
 	<body>
 
 		<div class="page-container">
-			<div class="tape"></div>
+			<div class="tape tape-1"></div>
 
 			<div class="polaroid" id="polaroid">
 				<div class="reel-container">
@@ -142,108 +24,42 @@
 				</div>
 
 				<div class="caption">
-					<p>Chapters close, stories live on</p>
-					<p>&lt;/&gt;</p>
+					<p>Chapters close, stories live on...</p>
+				</div>
+			</div>
+
+			<div class="message-card">
+				<div class="tape tape-2"></div>
+
+				<div class="message-content">
+					<h2 class="message-title">To Our Seniors</h2>
+
+					<p style="margin-bottom: 15px;">
+						It feels like just yesterday you were showing us the ropes. Through the stressful deadlines, the canteen breaks, and everything in between, you've left a mark on this place that won't easily fade.
+					</p>
+
+					<p style="margin-bottom: 15px;">
+						Thank you for the guidance, the memories, and all the laughs. The campus definitely won't be the same without you around.
+					</p>
+
+					<p>
+						Go out there and do what you do best. And remember, you're <span class="highlight">always</span>
+						welcome back.
+					</p>
+
+					<p class="sign-off">
+						Stay happy,<br>
+						- Your Juniors
+					</p>
 				</div>
 			</div>
 
 			<a href="https://photos.app.goo.gl/bfzz8yjWr7Tn9tCv7" class="album-btn" target="_blank">
-				Open Album
+				A small present
 			</a>
 		</div>
-		<script>
-			const TOTAL_VIDEOS = 8;
-			
-			const videoA = document.getElementById('videoA');
-			const videoB = document.getElementById('videoB');
-			
-			let current = videoA;
-			let next = videoB;
-			
-			const polaroid = document.getElementById('polaroid');
-			
-			let startX = 0;
-			let startY = 0;
-			
-			// Load a random video into "next"
-			function loadRandomVideo() {
-				const n = Math.floor(Math.random() * TOTAL_VIDEOS) + 1;
-				next.src = `assets/${n}.mp4`;
-				next.load();
-			}
-			
-			// Switch videos smoothly (crossfade)
-			function switchVideos() {
-				current.classList.remove('active');
-				next.classList.add('active');
-				
-				// swap references
-				[current, next] = [next, current];
-			}
-			
-			// When metadata is ready → start playback + switch
-			[videoA, videoB].forEach(video => {
-				video.addEventListener('loadedmetadata', () => {
-					try {
-						const maxStart = Math.max(0, video.duration - 5);
-						video.currentTime = Math.random() * maxStart;
-						} catch (e) {}
-						
-						video.play().catch(() => {});
-						
-						if (video === next) {
-							switchVideos();
-						}
-						});
-						});
-						
-						// When current video ends → preload next
-						videoA.addEventListener('ended', loadRandomVideo);
-						videoB.addEventListener('ended', loadRandomVideo);
-						
-						// Tap fallback for autoplay restrictions
-						document.addEventListener('click', () => {
-							videoA.play().catch(() => {});
-							videoB.play().catch(() => {});
-							}, { once: true });
-							
-							// Touch interactions (3D tilt)
-							document.addEventListener('touchstart', (e) => {
-								startX = e.touches[0].clientX;
-								startY = e.touches[0].clientY;
-								
-								polaroid.style.transform = 'rotateX(2deg) rotateY(-2deg)';
-								});
-								
-								document.addEventListener('touchmove', (e) => {
-									const x = e.touches[0].clientX;
-									const y = e.touches[0].clientY;
-									
-									const dx = x - startX;
-									const dy = y - startY;
-									
-									const rotateX = dy / 20;
-									const rotateY = dx / 20;
-									
-									polaroid.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-									});
-									
-									document.addEventListener('touchend', (e) => {
-										polaroid.style.transform = 'rotateX(0deg) rotateY(0deg)';
-										
-										const endX = e.changedTouches[0].clientX;
-										
-										// swipe to skip
-										if (Math.abs(endX - startX) > 80) {
-											loadRandomVideo();
-										}
-										});
-										
-										// Initial setup
-										window.addEventListener('load', () => {
-											videoA.classList.add('active'); // first video visible
-											loadRandomVideo();
-											});
+
+		<script src="script.js">
 		</script>
 	</body>
 </html>
