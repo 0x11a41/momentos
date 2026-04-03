@@ -1,4 +1,4 @@
-const TOTAL_VIDEOS = 17;
+const TOTAL_VIDEOS = 14;
 
 const videoA = document.getElementById('videoA');
 const videoB = document.getElementById('videoB');
