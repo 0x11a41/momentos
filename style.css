@@ -1,3 +1,4 @@
+/* --- 1. GLOBAL RESETS & BASE STYLES --- */
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -11,11 +12,11 @@ body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	min-height: 100vh;
 	color: #fff;
-	padding: 40px 20px;
+	padding: 40px 15px;
 	perspective: 1000px;
 }
 
@@ -28,27 +29,9 @@ body {
 	position: relative;
 }
 
-.tape {
-	width: 120px;
-	height: 30px;
-	background: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
-	backdrop-filter: blur(3px);
-	position: absolute;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-	z-index: 10;
-}
-
-.tape-1 {
-	top: -15px;
-	left: 50%;
-	transform: translateX(-50%) rotate(-2deg);
-}
-
 .polaroid {
 	background: linear-gradient(135deg, #fefdfa 0%, #f3eee3 100%);
 	padding: 16px 16px 35px 16px;
-	/* Adjusted bottom padding */
 	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
 	border-radius: 2px;
 	width: 100%;
@@ -81,7 +64,7 @@ body {
 	object-fit: cover;
 	opacity: 0;
 	transition: opacity 0.8s ease-in-out;
-	/* Smooth crossfade */
+	/* The smooth cross-fade effect */
 }
 
 .reel-container video.active {
@@ -94,15 +77,30 @@ body {
 	inset: 0;
 	background: url('https://grainy-gradients.vercel.app/noise.svg');
 	opacity: 0.15;
-	/* Subtly lowered so it doesn't wash out the video */
 	pointer-events: none;
 }
 
-/* --- MESSAGE CONTENT (Inside the Polaroid) --- */
+.tape {
+	width: 120px;
+	height: 30px;
+	background: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+	backdrop-filter: blur(3px);
+	position: absolute;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	z-index: 10;
+}
+
+.tape-1 {
+	top: -15px;
+	left: 50%;
+	transform: translateX(-50%) rotate(-2deg);
+}
+
 .message-content {
 	margin-top: 25px;
-	color: #333;
-	/* Dark gray for a realistic "ink" feel on the paper */
+	color: #222 !important;
+	/* Force dark gray ink color on mobile */
 	font-family: 'Caveat', cursive;
 	font-size: 1.35rem;
 	line-height: 1.4;
@@ -112,7 +110,7 @@ body {
 .message-title {
 	font-family: 'Playfair Display', serif;
 	font-size: 1.1rem;
-	color: #111;
+	color: #111 !important;
 	margin-bottom: 15px;
 	letter-spacing: 2px;
 	text-transform: uppercase;
@@ -127,8 +125,7 @@ body {
 .sign-off {
 	margin-top: 20px;
 	font-size: 1.5rem;
-	color: #222;
-	/* Darker tone for emphasis */
+	color: #111 !important;
 	font-weight: bold;
 }
 
@@ -136,11 +133,11 @@ body {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	margin-top: 40px;
+	margin: 30px auto 10px auto;
 	padding: 14px 28px;
 	background: rgba(255, 255, 255, 0.1);
 	border: 1px solid rgba(255, 255, 255, 0.2);
-	color: white;
+	color: white !important;
 	text-decoration: none;
 	border-radius: 30px;
 	font-size: 0.95rem;
